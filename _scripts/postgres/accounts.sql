@@ -1,0 +1,7 @@
+CREATE TABLE accounts (
+    id VARCHAR(36) PRIMARY KEY NOT NULL,
+    name VARCHAR NOT NULL,
+    cpf VARCHAR UNIQUE NOT NULL,
+    balance BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL
+);
