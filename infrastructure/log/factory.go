@@ -15,7 +15,6 @@ var (
 	errInvalidLoggerInstance = errors.New("invalid log instance")
 )
 
-// return logger
 func NewLoggerFactory(instance int) (logger.Logger, error) {
 	switch instance {
 	case InstanceZapLogger:
