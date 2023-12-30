@@ -18,7 +18,6 @@ type config struct {
 	logger        logger.Logger
 	validator     validator.Validator
 	dbSQL         repository.SQL
-	dbNoSQL       repository.NoSQL
 	ctxTimeout    time.Duration
 	webServerPort router.Port
 	webServer     router.Server
@@ -61,18 +60,6 @@ func (c *config) DbSQL(instance int) *config {
 	return c
 }
 
-func (c *config) DbNoSQL(instance int) *config {
-	db, err := database.NewDatabaseNoSQLFactory(instance)
-	if err != nil {
-		c.logger.Fatalln(err, "Could not make a connection to the database")
-	}
-
-	c.logger.Infof("Successfully connected to the NoSQL database")
-
-	c.dbNoSQL = db
-	return c
-}
-
 func (c *config) Validator(instance int) *config {
 	v, err := validation.NewValidatorFactory(instance)
 	if err != nil {
@@ -90,7 +77,6 @@ func (c *config) WebServer(instance int) *config {
 		instance,
 		c.logger,
 		c.dbSQL,
-		c.dbNoSQL,
 		c.validator,
 		c.webServerPort,
 		c.ctxTimeout,

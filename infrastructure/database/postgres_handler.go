@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/doglapping707/todo-api-go/adapter/repository"
+	_ "github.com/lib/pq"
 )
 
 type postgresHandler struct {

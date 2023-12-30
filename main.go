@@ -17,8 +17,7 @@ func main() {
 		ContextTimeout(10 * time.Second).
 		Logger(log.InstanceLogrusLogger).
 		Validator(validation.InstanceGoPlayground).
-		DbSQL(database.InstancePostgres).
-		DbNoSQL(database.InstanceMongoDB)
+		DbSQL(database.InstancePostgres)
 
 	app.WebServerPort(os.Getenv("APP_PORT")).
 		WebServer(router.InstanceGorillaMux).
