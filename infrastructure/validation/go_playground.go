@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/doglapping707/todo-api-go/adapter/validator"
-
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	go_playground "github.com/go-playground/validator/v10"
@@ -20,18 +19,16 @@ type goPlayground struct {
 
 func NewGoPlayground() (validator.Validator, error) {
 	var (
-		language         = en.New() // new translator instance for the 'en' locale
-		uni              = ut.New(language, language) // new UniversalTranslator instance
-		translate, found = uni.GetTranslator("en") // returns the specified translator for the given locale
+		language         = en.New()
+		uni              = ut.New(language, language)
+		translate, found = uni.GetTranslator("en")
 	)
 
 	if !found {
 		return nil, errors.New("translator not found")
 	}
 
-	// new validator instance
 	v := go_playground.New()
-	// registers a set of default translations
 	if err := en_translations.RegisterDefaultTranslations(v, translate); err != nil {
 		return nil, errors.New("translator not found")
 	}

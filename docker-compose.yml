@@ -10,11 +10,13 @@ services:
       - ${APP_PORT:-8080}:${APP_PORT}
     environment:
       - APP_NAME=$APP_NAME
+      - APP_PORT=$APP_PORT
       - POSTGRES_HOST=$POSTGRES_HOST
       - POSTGRES_PORT=$POSTGRES_PORT
       - POSTGRES_DB=$POSTGRES_DB
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DRIVER=$POSTGRES_DRIVER
     volumes:
       - ./:/app
     depends_on:
