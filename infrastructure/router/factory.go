@@ -21,7 +21,6 @@ var (
 
 const (
 	InstanceGorillaMux int = iota
-	InstanceGin
 )
 
 func NewWebServerFactory(

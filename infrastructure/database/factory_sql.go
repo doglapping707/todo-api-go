@@ -14,6 +14,7 @@ const (
 	InstancePostgres int = iota
 )
 
+// 生成されたDBハンドラーを返却する
 func NewDatabaseSQLFactory(instance int) (repository.SQL, error) {
 	switch instance {
 	case InstancePostgres:

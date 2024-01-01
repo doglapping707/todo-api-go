@@ -10,10 +10,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// postgresハンドラー
 type postgresHandler struct {
 	db *sql.DB
 }
 
+// postgresハンドラーを生成し返却する
 func NewPostgresHandler(c *config) (*postgresHandler, error) {
 	var ds = fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",

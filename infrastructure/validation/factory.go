@@ -14,6 +14,7 @@ const (
 	InstanceGoPlayground int = iota
 )
 
+// 生成されたバリデーターを返却する
 func NewValidatorFactory(instance int) (validator.Validator, error) {
 	switch instance {
 	case InstanceGoPlayground:

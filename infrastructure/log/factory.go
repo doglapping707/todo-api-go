@@ -7,18 +7,16 @@ import (
 )
 
 const (
-	InstanceZapLogger int = iota
-	InstanceLogrusLogger
+	InstanceLogrusLogger int = iota
 )
 
 var (
 	errInvalidLoggerInstance = errors.New("invalid log instance")
 )
 
+// 生成されたロガーを返却する
 func NewLoggerFactory(instance int) (logger.Logger, error) {
 	switch instance {
-	case InstanceZapLogger:
-		return NewZapLogger()
 	case InstanceLogrusLogger:
 		return NewLogrusLogger(), nil
 	default:

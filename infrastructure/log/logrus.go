@@ -5,10 +5,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// ロガー
 type logrusLogger struct {
 	logger *logrus.Logger
 }
 
+// ロガーを生成し返却する
 func NewLogrusLogger() logger.Logger {
 	log := logrus.New()
 	log.SetFormatter(&logrus.JSONFormatter{
@@ -18,6 +20,7 @@ func NewLogrusLogger() logger.Logger {
 	return &logrusLogger{logger: log}
 }
 
+// "Info"レベルのログを出力する
 func (l *logrusLogger) Infof(format string, args ...interface{}) {
 	l.logger.Infof(format, args...)
 }

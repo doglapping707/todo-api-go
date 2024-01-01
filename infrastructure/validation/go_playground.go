@@ -10,6 +10,7 @@ import (
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 )
 
+// バリデーター
 type goPlayground struct {
 	validator *go_playground.Validate
 	translate ut.Translator
@@ -17,6 +18,7 @@ type goPlayground struct {
 	msg       []string
 }
 
+// バリデーターを生成し返却する
 func NewGoPlayground() (validator.Validator, error) {
 	var (
 		language         = en.New()

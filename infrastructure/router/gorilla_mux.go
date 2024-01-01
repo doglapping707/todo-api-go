@@ -20,6 +20,7 @@ import (
 	"github.com/urfave/negroni"
 )
 
+// マルチプレクサー
 type gorillaMux struct {
 	router     *mux.Router
 	middleware *negroni.Negroni
@@ -30,6 +31,7 @@ type gorillaMux struct {
 	ctxTimeout time.Duration
 }
 
+// マルチプレクサーを生成し返却する
 func newGorillaMux(
 	log logger.Logger,
 	db repository.SQL,
@@ -48,10 +50,14 @@ func newGorillaMux(
 	}
 }
 
+// サーバーを起動する
 func (g gorillaMux) Listen() {
+	// HTTPハンドラーをセット
 	g.setAppHandlers(g.router)
+	// HTTPハンドラーを登録
 	g.middleware.UseHandler(g.router)
 
+	// HTTPサーバーを実行するためのパラメータ
 	server := &http.Server{
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 15 * time.Second,
@@ -59,6 +65,7 @@ func (g gorillaMux) Listen() {
 		Handler:      g.middleware,
 	}
 
+	// シグナルの受付を開始
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
@@ -83,16 +90,14 @@ func (g gorillaMux) Listen() {
 	g.log.Infof("Service down")
 }
 
+// HTTPハンドラーをセット
 func (g gorillaMux) setAppHandlers(router *mux.Router) {
 	api := router.PathPrefix("/v1").Subrouter()
-
 	api.Handle("/transfers", g.buildCreateTransferAction()).Methods(http.MethodPost)
 	api.Handle("/transfers", g.buildFindAllTransferAction()).Methods(http.MethodGet)
-
 	api.Handle("/accounts/{account_id}/balance", g.buildFindBalanceAccountAction()).Methods(http.MethodGet)
 	api.Handle("/accounts", g.buildCreateAccountAction()).Methods(http.MethodPost)
 	api.Handle("/accounts", g.buildFindAllAccountAction()).Methods(http.MethodGet)
-
 	api.HandleFunc("/health", action.HealthCheck).Methods(http.MethodGet)
 }
 

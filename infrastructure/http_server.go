@@ -13,6 +13,7 @@ import (
 	"github.com/doglapping707/todo-api-go/infrastructure/validation"
 )
 
+// サーバー接続設定
 type config struct {
 	appName       string
 	logger        logger.Logger
@@ -23,20 +24,24 @@ type config struct {
 	webServer     router.Server
 }
 
+// サーバー接続設定を返す
 func NewConfig() *config {
 	return &config{}
 }
 
+// サーバー接続設定に "コンテキストがタイムアウトする時間" をセットし返却する
 func (c *config) ContextTimeout(t time.Duration) *config {
 	c.ctxTimeout = t
 	return c
 }
 
+// サーバー接続設定に "アプリケーション名" をセットし返却する
 func (c *config) Name(name string) *config {
 	c.appName = name
 	return c
 }
 
+// サーバー接続設定に "ロガー" をセットし返却する
 func (c *config) Logger(instance int) *config {
 	log, err := log.NewLoggerFactory(instance)
 	if err != nil {
@@ -48,6 +53,7 @@ func (c *config) Logger(instance int) *config {
 	return c
 }
 
+// サーバー接続設定に "DBハンドラー" をセットし返却する
 func (c *config) DbSQL(instance int) *config {
 	db, err := database.NewDatabaseSQLFactory(instance)
 	if err != nil {
@@ -60,6 +66,7 @@ func (c *config) DbSQL(instance int) *config {
 	return c
 }
 
+// サーバー接続設定に "バリデーター" をセットし返却する
 func (c *config) Validator(instance int) *config {
 	v, err := validation.NewValidatorFactory(instance)
 	if err != nil {
@@ -72,6 +79,7 @@ func (c *config) Validator(instance int) *config {
 	return c
 }
 
+// サーバー接続設定に "マルチプレクサー" をセットし返却する
 func (c *config) WebServer(instance int) *config {
 	s, err := router.NewWebServerFactory(
 		instance,
@@ -92,6 +100,7 @@ func (c *config) WebServer(instance int) *config {
 	return c
 }
 
+// サーバー接続設定に "ポート" をセットし返却する
 func (c *config) WebServerPort(port string) *config {
 	p, err := strconv.ParseInt(port, 10, 64)
 	if err != nil {
@@ -102,6 +111,7 @@ func (c *config) WebServerPort(port string) *config {
 	return c
 }
 
+// サーバーを起動する
 func (c *config) Start() {
 	c.webServer.Listen()
 }
