@@ -90,14 +90,23 @@ func (g gorillaMux) Listen() {
 	g.log.Infof("Service down")
 }
 
-// HTTPハンドラーをセット
 func (g gorillaMux) setAppHandlers(router *mux.Router) {
+	// プレフィックスを設定する
 	api := router.PathPrefix("/v1").Subrouter()
+
+	// 送金
 	api.Handle("/transfers", g.buildCreateTransferAction()).Methods(http.MethodPost)
 	api.Handle("/transfers", g.buildFindAllTransferAction()).Methods(http.MethodGet)
+
+	// アカウント
 	api.Handle("/accounts/{account_id}/balance", g.buildFindBalanceAccountAction()).Methods(http.MethodGet)
 	api.Handle("/accounts", g.buildCreateAccountAction()).Methods(http.MethodPost)
 	api.Handle("/accounts", g.buildFindAllAccountAction()).Methods(http.MethodGet)
+
+	// タスク
+	api.Handle("/tasks", g.buildCreateTaskAction()).Methods(http.MethodPost)
+
+	// ヘルスチェック
 	api.HandleFunc("/health", action.HealthCheck).Methods(http.MethodGet)
 }
 
@@ -205,6 +214,26 @@ func (g gorillaMux) buildFindBalanceAccountAction() *negroni.Negroni {
 		q.Add("account_id", vars["account_id"])
 		req.URL.RawQuery = q.Encode()
 
+		act.Execute(res, req)
+	}
+
+	return negroni.New(
+		negroni.HandlerFunc(middleware.NewLogger(g.log).Execute),
+		negroni.NewRecovery(),
+		negroni.Wrap(handler),
+	)
+}
+
+func (g gorillaMux) buildCreateTaskAction() *negroni.Negroni {
+	var handler http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
+		var (
+			uc = usecase.NewCreateTaskInteractor(
+				repository.NewTaskSQL(g.db),
+				presenter.NewCreateTaskPresenter(),
+				g.ctxTimeout,
+			)
+			act = action.NewCreateTaskAction(uc, g.log, g.validator)
+		)
 		act.Execute(res, req)
 	}
 
