@@ -1,9 +1,9 @@
 ## Test endpoints API using curl
 * Creating new task
 
-```Request```
+`Request`
 
-```
+```bash
 curl -i --request POST 'http://localhost:8080/v1/tasks' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -11,7 +11,7 @@ curl -i --request POST 'http://localhost:8080/v1/tasks' \
 }'
 ```
 
-```
+```json
 {
     "title":"test task",
     "created_at":"2024-01-04T09:41:30Z",
