@@ -43,7 +43,7 @@ func (a AccountSQL) Create(ctx context.Context, account domain.Account) (domain.
 }
 
 func (a AccountSQL) UpdateBalance(ctx context.Context, ID domain.AccountID, balance domain.Money) error {
-	tx, ok := ctx.Value("TransactionContextKey").(Tx)
+	tx, ok := ctx.Value(KeyTransactionContext).(Tx)
 	if !ok {
 		var err error
 		tx, err = a.db.BeginTx(ctx)
@@ -101,7 +101,8 @@ func (a AccountSQL) FindAll(ctx context.Context) ([]domain.Account, error) {
 }
 
 func (a AccountSQL) FindByID(ctx context.Context, ID domain.AccountID) (domain.Account, error) {
-	tx, ok := ctx.Value("TransactionContextKey").(Tx)
+	// Txを取得する
+	tx, ok := ctx.Value(KeyTransactionContext).(Tx)
 	if !ok {
 		var err error
 		tx, err = a.db.BeginTx(ctx)
@@ -119,6 +120,7 @@ func (a AccountSQL) FindByID(ctx context.Context, ID domain.AccountID) (domain.A
 		createdAt time.Time
 	)
 
+	// SQLを実行する
 	err := tx.QueryRowContext(ctx, query, ID).Scan(&id, &name, &CPF, &balance, &createdAt)
 	switch {
 	case err == sql.ErrNoRows:

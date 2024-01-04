@@ -19,7 +19,7 @@ func NewTransferSQL(db SQL) TransferSQL {
 }
 
 func (t TransferSQL) Create(ctx context.Context, transfer domain.Transfer) (domain.Transfer, error) {
-	tx, ok := ctx.Value("TransactionContextKey").(Tx)
+	tx, ok := ctx.Value(KeyTransactionContext).(Tx)
 	if !ok {
 		var err error
 		tx, err = t.db.BeginTx(ctx)
@@ -90,12 +90,16 @@ func (t TransferSQL) FindAll(ctx context.Context) ([]domain.Transfer, error) {
 }
 
 func (t TransferSQL) WithTransaction(ctx context.Context, fn func(ctxTx context.Context) error) error {
+	// Txを取得する
 	tx, err := t.db.BeginTx(ctx)
 	if err != nil {
 		return errors.Wrap(err, "error begin tx")
 	}
 
-	ctxTx := context.WithValue(ctx, "TransactionContextKey", tx)
+	// Txをコンテキストに格納する
+	ctxTx := context.WithValue(ctx, KeyTransactionContext, tx)
+
+	// トランザクション処理を行う
 	err = fn(ctxTx)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {

@@ -2,6 +2,10 @@ package repository
 
 import "context"
 
+type contextKey string
+
+const KeyTransactionContext contextKey = "TransactionContextKey"
+
 type SQL interface {
 	ExecuteContext(context.Context, string, ...interface{}) error
 	QueryContext(context.Context, string, ...interface{}) (Rows, error)

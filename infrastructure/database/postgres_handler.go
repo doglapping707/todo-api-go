@@ -10,12 +10,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// postgresハンドラー
+// postgresハンドラ
 type postgresHandler struct {
 	db *sql.DB
 }
 
-// postgresハンドラーを生成し返却する
+// postgresハンドラを却する
 func NewPostgresHandler(c *config) (*postgresHandler, error) {
 	var ds = fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
@@ -40,6 +40,7 @@ func NewPostgresHandler(c *config) (*postgresHandler, error) {
 	return &postgresHandler{db: db}, nil
 }
 
+// Txを取得する
 func (p postgresHandler) BeginTx(ctx context.Context) (repository.Tx, error) {
 	tx, err := p.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
