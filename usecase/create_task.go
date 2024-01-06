@@ -15,7 +15,7 @@ type (
 
 	// タスク作成の入力時
 	CreateTaskInput struct {
-		Title string `json:"title" validate:"required,gt=0,lt=15"`
+		Title string `json:"title" validate:"required,gte=1,lte=15"`
 	}
 
 	// タスク作成の成形を行う抽象的な実装
