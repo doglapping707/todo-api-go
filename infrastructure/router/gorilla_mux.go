@@ -20,7 +20,7 @@ import (
 	"github.com/urfave/negroni"
 )
 
-// マルチプレクサー
+// マルチプレクサ
 type gorillaMux struct {
 	router     *mux.Router
 	middleware *negroni.Negroni
@@ -31,7 +31,7 @@ type gorillaMux struct {
 	ctxTimeout time.Duration
 }
 
-// マルチプレクサーを生成し返却する
+// マルチプレクサを返却する
 func newGorillaMux(
 	log logger.Logger,
 	db repository.SQL,
@@ -50,14 +50,13 @@ func newGorillaMux(
 	}
 }
 
-// サーバーを起動する
 func (g gorillaMux) Listen() {
-	// HTTPハンドラーをセット
+	// HTTPハンドラーをセットする
 	g.setAppHandlers(g.router)
-	// HTTPハンドラーを登録
+	// HTTPハンドラーを登録する
 	g.middleware.UseHandler(g.router)
 
-	// HTTPサーバーを実行するためのパラメータ
+	// HTTPサーバーを起動するためのパラメータを成形する
 	server := &http.Server{
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 15 * time.Second,
@@ -65,10 +64,11 @@ func (g gorillaMux) Listen() {
 		Handler:      g.middleware,
 	}
 
-	// シグナルの受付を開始
+	// シグナルの受付を開始する
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
+	// HTTPサーバーを起動する
 	go func() {
 		g.log.WithFields(logger.Fields{"port": g.port}).Infof("Starting HTTP Server")
 		if err := server.ListenAndServe(); err != nil {
@@ -76,17 +76,21 @@ func (g gorillaMux) Listen() {
 		}
 	}()
 
+	// シグナルを検知する
 	<-stop
 
+	// 指定時間でタイムアウトするコンテキストを作成する
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer func() {
 		cancel()
 	}()
 
+	// サーバーを停止する
 	if err := server.Shutdown(ctx); err != nil {
 		g.log.WithError(err).Fatalln("Server Shutdown Failed")
 	}
 
+	// ログを出力する
 	g.log.Infof("Service down")
 }
 

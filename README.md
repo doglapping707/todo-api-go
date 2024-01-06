@@ -15,8 +15,8 @@ curl -i --request POST 'http://localhost:8080/v1/tasks' \
 
 ```json
 {
-    "title":"test task",
-    "created_at":"2024-01-04T09:41:30Z",
-    "updated_at":"2024-01-04T09:41:30Z"
+    "title":"Test Task",
+    "created_at":"2024-01-04T10:02:14Z",
+    "updated_at":"2024-01-04T10:02:14Z"
 }
 ```
