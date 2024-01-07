@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"reflect"
 	"testing"
 	"time"
@@ -10,95 +9,96 @@ import (
 	"github.com/doglapping707/todo-api-go/domain"
 )
 
-type mockTaskRepoStore struct {
+type mockTaskRepo struct {
 	domain.TaskRepository
 
 	result domain.Task
 	err    error
 }
 
-func (m mockTaskRepoStore) Create(_ context.Context, _ domain.Task) (domain.Task, error) {
-	return m.result, m.err
+func (t mockTaskRepo) Update(_ context.Context, _ domain.Task) (domain.Task, error) {
+	return t.result, t.err
 }
 
-type mockCreateTaskPresenter struct {
-	result CreateTaskOutput
+type mockUpdateTaskPresenter struct {
+	result UpdateTaskOutput
 }
 
-func (m mockCreateTaskPresenter) Output(_ domain.Task) CreateTaskOutput {
+func (m mockUpdateTaskPresenter) Output(_ domain.Task) UpdateTaskOutput {
 	return m.result
 }
 
-func TestCreateTaskInteractor_Execute(t *testing.T) {
+func TestUpdateTaskInteractor_Execute(t *testing.T) {
 	// 並列処理を可能にする
 	t.Parallel()
 
 	type args struct {
-		input CreateTaskInput
+		input UpdateTaskInput
 	}
 
-	// テスト対象
 	tests := []struct {
 		name          string
 		args          args
 		repository    domain.TaskRepository
-		presenter     CreateTaskPresenter
-		expected      CreateTaskOutput
+		presenter     UpdateTaskPresenter
+		expected      UpdateTaskOutput
 		expectedError interface{}
 	}{
 		// 正常値
 		{
-			name: "Create task successful",
+			name: "Update account successful",
 			args: args{
-				input: CreateTaskInput{
-					Title: "Test",
+				input: UpdateTaskInput{
+					ID:    1,
+					Title: "Test Task2",
 				},
 			},
-			repository: mockTaskRepoStore{
+			repository: mockTaskRepo{
 				result: domain.Task{
-					Title:     "Test",
-					CreatedAt: time.Time{},
+					ID:        1,
+					Title:     "Test Task2",
 					UpdatedAt: time.Time{},
 				},
 				err: nil,
 			},
-			presenter: mockCreateTaskPresenter{
-				result: CreateTaskOutput{
-					Title:     "Test",
-					CreatedAt: time.Time{}.String(),
+			presenter: mockUpdateTaskPresenter{
+				result: UpdateTaskOutput{
+					ID:        1,
+					Title:     "Test Task2",
 					UpdatedAt: time.Time{}.String(),
 				},
 			},
-			expected: CreateTaskOutput{
-				Title:     "Test",
-				CreatedAt: time.Time{}.String(),
+			expected: UpdateTaskOutput{
+				ID:        1,
+				Title:     "Test Task2",
 				UpdatedAt: time.Time{}.String(),
 			},
 		},
 
 		// 異常値
 		{
-			name: "Create task generic error",
+			name: "Update task generic error",
 			args: args{
-				input: CreateTaskInput{
+				input: UpdateTaskInput{
+					ID:    0,
 					Title: "",
 				},
 			},
-			repository: mockTaskRepoStore{
+			repository: mockTaskRepo{
 				result: domain.Task{},
-				err:    errors.New("error"),
+				err: nil,
 			},
-			presenter: mockCreateTaskPresenter{
-				result: CreateTaskOutput{},
+			presenter: mockUpdateTaskPresenter{
+				result: UpdateTaskOutput{},
 			},
-			expected:      CreateTaskOutput{},
+			expected: UpdateTaskOutput{},
 			expectedError: "error",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var uc = NewCreateTaskInteractor(tt.repository, tt.presenter, time.Second)
+			var uc = NewUpdateTaskInteractor(tt.repository, tt.presenter, time.Second)
 
 			result, err := uc.Execute(context.TODO(), tt.args.input)
 			if (err != nil) && (err.Error() != tt.expectedError) {

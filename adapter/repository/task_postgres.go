@@ -31,3 +31,19 @@ func (t TaskSQL) Create(ctx context.Context, task domain.Task) (domain.Task, err
 
 	return task, nil
 }
+
+func (t TaskSQL) Update(ctx context.Context, task domain.Task) (domain.Task, error) {
+	query := "UPDATE tasks SET title = $1 WHERE id = $2"
+
+	// sqlを実行する
+	if err := t.db.ExecuteContext(
+		ctx,
+		query,
+		task.Title,
+		task.ID,
+	); err != nil {
+		return domain.Task{}, errors.Wrap(err, "error updating task")
+	}
+
+	return task, nil
+}

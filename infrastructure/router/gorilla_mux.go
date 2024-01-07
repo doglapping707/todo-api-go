@@ -109,6 +109,7 @@ func (g gorillaMux) setAppHandlers(router *mux.Router) {
 
 	// タスク
 	api.Handle("/tasks", g.buildCreateTaskAction()).Methods(http.MethodPost)
+	api.Handle("/tasks", g.buildUpdateTaskAction()).Methods(http.MethodPut)
 
 	// ヘルスチェック
 	api.HandleFunc("/health", action.HealthCheck).Methods(http.MethodGet)
@@ -237,6 +238,26 @@ func (g gorillaMux) buildCreateTaskAction() *negroni.Negroni {
 				g.ctxTimeout,
 			)
 			act = action.NewCreateTaskAction(uc, g.log, g.validator)
+		)
+		act.Execute(res, req)
+	}
+
+	return negroni.New(
+		negroni.HandlerFunc(middleware.NewLogger(g.log).Execute),
+		negroni.NewRecovery(),
+		negroni.Wrap(handler),
+	)
+}
+
+func (g gorillaMux) buildUpdateTaskAction() *negroni.Negroni {
+	var handler http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
+		var (
+			uc = usecase.NewUpdateTaskInteractor(
+				repository.NewTaskSQL(g.db),
+				presenter.NewUpdateTaskPresenter(),
+				g.ctxTimeout,
+			)
+			act = action.NewUpdateTaskAction(uc, g.log, g.validator)
 		)
 		act.Execute(res, req)
 	}
