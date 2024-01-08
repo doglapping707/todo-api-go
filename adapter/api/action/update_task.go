@@ -55,7 +55,7 @@ func (t UpdateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// タスクの更新を行う
-	output, err := t.uc.Execute(r.Context(), input)
+	err := t.uc.Execute(r.Context(), input)
 
 	if err != nil {
 		logging.NewError(
@@ -73,7 +73,7 @@ func (t UpdateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 	logging.NewInfo(t.log, logKey, http.StatusNoContent).Log("success updating task")
 
 	// 実行内容を出力する
-	response.NewSuccess(output, http.StatusNoContent).Send(w)
+	response.NewSuccess(nil, http.StatusNoContent).Send(w)
 }
 
 func (t UpdateTaskAction) validateInput(input usecase.UpdateTaskInput) []string {

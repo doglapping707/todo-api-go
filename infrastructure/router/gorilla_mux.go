@@ -254,7 +254,6 @@ func (g gorillaMux) buildUpdateTaskAction() *negroni.Negroni {
 		var (
 			uc = usecase.NewUpdateTaskInteractor(
 				repository.NewTaskSQL(g.db),
-				presenter.NewUpdateTaskPresenter(),
 				g.ctxTimeout,
 			)
 			act = action.NewUpdateTaskAction(uc, g.log, g.validator)
