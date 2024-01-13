@@ -3,7 +3,6 @@ package action
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/doglapping707/todo-api-go/adapter/api/logging"
 	"github.com/doglapping707/todo-api-go/adapter/api/response"
@@ -30,7 +29,19 @@ func NewUpdateTaskAction(uc usecase.UpdateTaskUseCase, log logger.Logger, v vali
 func (t UpdateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 	var logKey = "update_task"
 
-	var taskID, _ = strconv.ParseUint(r.URL.Query().Get("task_id"), 10, 64)
+	var taskID, err = domain.Uint64(r.URL.Query().Get("task_id"))
+	if err != nil {
+		var err = response.ErrParameterInvalid
+		logging.NewError(
+			t.log,
+			err,
+			logKey,
+			http.StatusBadRequest,
+		).Log("invalid parameter")
+
+		response.NewError(err, http.StatusBadRequest).Send(w)
+		return
+	}
 
 	var input usecase.UpdateTaskInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -58,10 +69,7 @@ func (t UpdateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// タスクの更新を行う
-	err := t.uc.Execute(r.Context(), input, domain.TaskID(taskID))
-
-	if err != nil {
+	if err := t.uc.Execute(r.Context(), input, domain.TaskID(taskID)); err != nil {
 		logging.NewError(
 			t.log,
 			err,
@@ -73,18 +81,15 @@ func (t UpdateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// ログを出力する
 	logging.NewInfo(t.log, logKey, http.StatusNoContent).Log("success updating task")
 
-	// 実行内容を出力する
 	response.NewSuccess(nil, http.StatusNoContent).Send(w)
 }
 
 func (t UpdateTaskAction) validateInput(input usecase.UpdateTaskInput) []string {
 	var msgs []string
 
-	err := t.validator.Validate(input)
-	if err != nil {
+	if err := t.validator.Validate(input); err != nil {
 		for _, msg := range t.validator.Messages() {
 			msg := msg
 			msgs = append(msgs, msg)

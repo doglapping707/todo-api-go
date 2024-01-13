@@ -33,17 +33,14 @@ func NewUpdateTaskInteractor(
 }
 
 func (t UpdateTaskInteractor) Execute(ctx context.Context, input UpdateTaskInput, taskID domain.TaskID) error {
-	// タイムアウトを設定したコンテキストを取得する
 	ctx, cancel := context.WithTimeout(ctx, t.ctxTimeout)
 	defer cancel()
 
-	// タスクを成形する
 	var task = domain.Task{
 		Title:     input.Title,
 		UpdatedAt: time.Now(),
 	}
 
-	// タスクを更新する
 	err := t.repo.Update(ctx, task, taskID)
 	if err != nil {
 		return err

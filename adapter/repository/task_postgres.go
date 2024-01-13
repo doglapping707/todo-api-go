@@ -20,7 +20,6 @@ func NewTaskSQL(db SQL) TaskSQL {
 func (t TaskSQL) Create(ctx context.Context, task domain.Task) (domain.Task, error) {
 	var query = "INSERT INTO tasks (title) VALUES ($1)"
 
-	// sqlを実行する
 	if err := t.db.ExecuteContext(
 		ctx,
 		query,
@@ -35,7 +34,6 @@ func (t TaskSQL) Create(ctx context.Context, task domain.Task) (domain.Task, err
 func (t TaskSQL) Update(ctx context.Context, task domain.Task, taskID domain.TaskID) error {
 	var query = "UPDATE tasks SET title = $1 WHERE id = $2"
 
-	// sqlを実行する
 	if err := t.db.ExecuteContext(
 		ctx,
 		query,

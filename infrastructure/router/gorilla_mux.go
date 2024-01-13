@@ -20,7 +20,6 @@ import (
 	"github.com/urfave/negroni"
 )
 
-// マルチプレクサ
 type gorillaMux struct {
 	router     *mux.Router
 	middleware *negroni.Negroni
@@ -31,7 +30,6 @@ type gorillaMux struct {
 	ctxTimeout time.Duration
 }
 
-// マルチプレクサを返却する
 func newGorillaMux(
 	log logger.Logger,
 	db repository.SQL,
