@@ -26,10 +26,9 @@ curl -i --request POST 'http://localhost:8080/v1/tasks' \
 `Request`
 
 ```bash
-curl -i --request PUT 'http://localhost:8080/v1/tasks' \
+curl -i --request PUT 'http://localhost:8080/v1/tasks/1' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "id":    1,
     "title": "Task_2"
 }'
 ```

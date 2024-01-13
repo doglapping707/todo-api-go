@@ -9,7 +9,7 @@ type (
 	// タスクが持つ抽象的な実装
 	TaskRepository interface {
 		Create(context.Context, Task) (Task, error)
-		Update(context.Context, Task) error
+		Update(context.Context, Task, string) error
 		FindAll(context.Context) ([]Task, error)
 	}
 

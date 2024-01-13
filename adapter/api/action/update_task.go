@@ -54,8 +54,10 @@ func (t UpdateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var taskID = r.URL.Query().Get("task_id")
+
 	// タスクの更新を行う
-	err := t.uc.Execute(r.Context(), input)
+	err := t.uc.Execute(r.Context(), input, taskID)
 
 	if err != nil {
 		logging.NewError(

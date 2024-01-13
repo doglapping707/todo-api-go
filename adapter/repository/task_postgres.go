@@ -32,7 +32,7 @@ func (t TaskSQL) Create(ctx context.Context, task domain.Task) (domain.Task, err
 	return task, nil
 }
 
-func (t TaskSQL) Update(ctx context.Context, task domain.Task) error {
+func (t TaskSQL) Update(ctx context.Context, task domain.Task, taskID string) error {
 	var query = "UPDATE tasks SET title = $1 WHERE id = $2"
 
 	// sqlを実行する
@@ -40,7 +40,7 @@ func (t TaskSQL) Update(ctx context.Context, task domain.Task) error {
 		ctx,
 		query,
 		task.Title,
-		task.ID,
+		taskID,
 	); err != nil {
 		return errors.Wrap(err, "error updating task")
 	}

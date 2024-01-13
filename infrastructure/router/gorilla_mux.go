@@ -109,7 +109,7 @@ func (g gorillaMux) setAppHandlers(router *mux.Router) {
 
 	// タスク
 	api.Handle("/tasks", g.buildCreateTaskAction()).Methods(http.MethodPost)
-	api.Handle("/tasks", g.buildUpdateTaskAction()).Methods(http.MethodPut)
+	api.Handle("/tasks/{task_id}", g.buildUpdateTaskAction()).Methods(http.MethodPut)
 	api.Handle("/tasks", g.buildFindAllTaskAction()).Methods(http.MethodGet)
 
 	// ヘルスチェック
@@ -259,6 +259,15 @@ func (g gorillaMux) buildUpdateTaskAction() *negroni.Negroni {
 			)
 			act = action.NewUpdateTaskAction(uc, g.log, g.validator)
 		)
+
+		var (
+			vars = mux.Vars(req)   // Get path params
+			q    = req.URL.Query() // Get query param
+		)
+
+		q.Add("task_id", vars["task_id"])
+		req.URL.RawQuery = q.Encode()
+
 		act.Execute(res, req)
 	}
 
