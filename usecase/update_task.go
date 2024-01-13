@@ -9,7 +9,7 @@ import (
 
 type (
 	UpdateTaskUseCase interface {
-		Execute(context.Context, UpdateTaskInput, string) error
+		Execute(context.Context, UpdateTaskInput, domain.TaskID) error
 	}
 
 	UpdateTaskInput struct {
@@ -32,7 +32,7 @@ func NewUpdateTaskInteractor(
 	}
 }
 
-func (t UpdateTaskInteractor) Execute(ctx context.Context, input UpdateTaskInput, taskID string) error {
+func (t UpdateTaskInteractor) Execute(ctx context.Context, input UpdateTaskInput, taskID domain.TaskID) error {
 	// タイムアウトを設定したコンテキストを取得する
 	ctx, cancel := context.WithTimeout(ctx, t.ctxTimeout)
 	defer cancel()

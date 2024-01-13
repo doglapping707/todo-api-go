@@ -17,8 +17,8 @@ type (
 	}
 
 	FindAllTaskOutput struct {
-		ID        uint64  `json:"id"`
-		Title     string  `json:"title"`
+		ID    domain.TaskID  `json:"id"`
+		Title string         `json:"title"`
 	}
 
 	findAllTaskInteractor struct {

@@ -3,11 +3,13 @@ package action
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/doglapping707/todo-api-go/adapter/api/logging"
 	"github.com/doglapping707/todo-api-go/adapter/api/response"
 	"github.com/doglapping707/todo-api-go/adapter/logger"
 	"github.com/doglapping707/todo-api-go/adapter/validator"
+	"github.com/doglapping707/todo-api-go/domain"
 	"github.com/doglapping707/todo-api-go/usecase"
 )
 
@@ -27,6 +29,8 @@ func NewUpdateTaskAction(uc usecase.UpdateTaskUseCase, log logger.Logger, v vali
 
 func (t UpdateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 	var logKey = "update_task"
+
+	var taskID, _ = strconv.ParseUint(r.URL.Query().Get("task_id"), 10, 64)
 
 	var input usecase.UpdateTaskInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -54,10 +58,8 @@ func (t UpdateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var taskID = r.URL.Query().Get("task_id")
-
 	// タスクの更新を行う
-	err := t.uc.Execute(r.Context(), input, taskID)
+	err := t.uc.Execute(r.Context(), input, domain.TaskID(taskID))
 
 	if err != nil {
 		logging.NewError(

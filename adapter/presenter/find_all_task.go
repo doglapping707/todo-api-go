@@ -16,8 +16,8 @@ func (a findAllTaskPresenter) Output(tasks []domain.Task) []usecase.FindAllTaskO
 
 	for _, task := range tasks {
 		o = append(o, usecase.FindAllTaskOutput{
-			ID:        task.ID,
-			Title:     task.Title,
+			ID:    task.ID,
+			Title: task.Title,
 		})
 	}
 

@@ -32,7 +32,7 @@ func (t TaskSQL) Create(ctx context.Context, task domain.Task) (domain.Task, err
 	return task, nil
 }
 
-func (t TaskSQL) Update(ctx context.Context, task domain.Task, taskID string) error {
+func (t TaskSQL) Update(ctx context.Context, task domain.Task, taskID domain.TaskID) error {
 	var query = "UPDATE tasks SET title = $1 WHERE id = $2"
 
 	// sqlを実行する
@@ -59,8 +59,8 @@ func (t TaskSQL) FindAll(ctx context.Context) ([]domain.Task, error) {
 	var tasks = make([]domain.Task, 0)
 	for rows.Next() {
 		var (
-			ID        uint64
-			title     string
+			ID    domain.TaskID
+			title string
 		)
 
 		if err = rows.Scan(&ID, &title); err != nil {
