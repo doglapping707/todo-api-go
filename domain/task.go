@@ -10,7 +10,7 @@ type (
 	TaskRepository interface {
 		Create(context.Context, Task) (Task, error)
 		Update(context.Context, Task) error
-		// FindAll() ([]Task, error)
+		FindAll(context.Context) ([]Task, error)
 	}
 
 	// タスク

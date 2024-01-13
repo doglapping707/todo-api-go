@@ -1,5 +1,5 @@
 ## Test endpoints API using curl
-* Creating new task
+* Create a new task
 
 `Request`
 
@@ -7,7 +7,7 @@
 curl -i --request POST 'http://localhost:8080/v1/tasks' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "title": "TestTask 1"
+    "title": "Task_1"
 }'
 ```
 
@@ -15,13 +15,13 @@ curl -i --request POST 'http://localhost:8080/v1/tasks' \
 
 ```json
 {
-    "title":"Test Task",
+    "title":"Task_1",
     "created_at":"2024-01-04T10:02:14Z",
     "updated_at":"2024-01-04T10:02:14Z"
 }
 ```
 
-* Updating new task
+* Update a task
 
 `Request`
 
@@ -30,6 +30,31 @@ curl -i --request PUT 'http://localhost:8080/v1/tasks' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "id":    1,
-    "title": "TestTask 2"
+    "title": "Task_2"
 }'
+```
+
+* Liste a tasks
+
+`Request`
+
+```bash
+curl -i --request GET 'http://localhost:8080/v1/tasks'
+```
+
+`Response`
+
+```json
+{
+    "id":1,
+    "title":"Task_1",
+},
+{
+    "id":2,
+    "title":"Task_2",
+},
+{
+    "id":3,
+    "title":"Task_3",
+},
 ```
