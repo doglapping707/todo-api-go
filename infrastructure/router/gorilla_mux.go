@@ -96,15 +96,6 @@ func (g gorillaMux) setAppHandlers(router *mux.Router) {
 	// プレフィックスを設定する
 	api := router.PathPrefix("/v1").Subrouter()
 
-	// 送金
-	api.Handle("/transfers", g.buildCreateTransferAction()).Methods(http.MethodPost)
-	api.Handle("/transfers", g.buildFindAllTransferAction()).Methods(http.MethodGet)
-
-	// アカウント
-	api.Handle("/accounts/{account_id}/balance", g.buildFindBalanceAccountAction()).Methods(http.MethodGet)
-	api.Handle("/accounts", g.buildCreateAccountAction()).Methods(http.MethodPost)
-	api.Handle("/accounts", g.buildFindAllAccountAction()).Methods(http.MethodGet)
-
 	// タスク
 	api.Handle("/tasks", g.buildCreateTaskAction()).Methods(http.MethodPost)
 	api.Handle("/tasks/{task_id}", g.buildUpdateTaskAction()).Methods(http.MethodPut)
@@ -112,120 +103,6 @@ func (g gorillaMux) setAppHandlers(router *mux.Router) {
 
 	// ヘルスチェック
 	api.HandleFunc("/health", action.HealthCheck).Methods(http.MethodGet)
-}
-
-func (g gorillaMux) buildCreateTransferAction() *negroni.Negroni {
-	var handler http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
-		var (
-			uc = usecase.NewCreateTransferInteractor(
-				repository.NewTransferSQL(g.db),
-				repository.NewAccountSQL(g.db),
-				presenter.NewCreateTransferPresenter(),
-				g.ctxTimeout,
-			)
-			act = action.NewCreateTransferAction(uc, g.log, g.validator)
-		)
-
-		act.Execute(res, req)
-	}
-
-	return negroni.New(
-		negroni.HandlerFunc(middleware.NewLogger(g.log).Execute),
-		negroni.NewRecovery(),
-		negroni.Wrap(handler),
-	)
-}
-
-func (g gorillaMux) buildFindAllTransferAction() *negroni.Negroni {
-	var handler http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
-		var (
-			uc = usecase.NewFindAllTransferInteractor(
-				repository.NewTransferSQL(g.db),
-				presenter.NewFindAllTransferPresenter(),
-				g.ctxTimeout,
-			)
-			act = action.NewFindAllTransferAction(uc, g.log)
-		)
-
-		act.Execute(res, req)
-	}
-
-	return negroni.New(
-		negroni.HandlerFunc(middleware.NewLogger(g.log).Execute),
-		negroni.NewRecovery(),
-		negroni.Wrap(handler),
-	)
-}
-
-func (g gorillaMux) buildCreateAccountAction() *negroni.Negroni {
-	var handler http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
-		var (
-			uc = usecase.NewCreateAccountInteractor(
-				repository.NewAccountSQL(g.db),
-				presenter.NewCreateAccountPresenter(),
-				g.ctxTimeout,
-			)
-			act = action.NewCreateAccountAction(uc, g.log, g.validator)
-		)
-
-		act.Execute(res, req)
-	}
-
-	return negroni.New(
-		negroni.HandlerFunc(middleware.NewLogger(g.log).Execute),
-		negroni.NewRecovery(),
-		negroni.Wrap(handler),
-	)
-}
-
-func (g gorillaMux) buildFindAllAccountAction() *negroni.Negroni {
-	var handler http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
-		var (
-			uc = usecase.NewFindAllAccountInteractor(
-				repository.NewAccountSQL(g.db),
-				presenter.NewFindAllAccountPresenter(),
-				g.ctxTimeout,
-			)
-			act = action.NewFindAllAccountAction(uc, g.log)
-		)
-
-		act.Execute(res, req)
-	}
-
-	return negroni.New(
-		negroni.HandlerFunc(middleware.NewLogger(g.log).Execute),
-		negroni.NewRecovery(),
-		negroni.Wrap(handler),
-	)
-}
-
-func (g gorillaMux) buildFindBalanceAccountAction() *negroni.Negroni {
-	var handler http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
-		var (
-			uc = usecase.NewFindBalanceAccountInteractor(
-				repository.NewAccountSQL(g.db),
-				presenter.NewFindAccountBalancePresenter(),
-				g.ctxTimeout,
-			)
-			act = action.NewFindAccountBalanceAction(uc, g.log)
-		)
-
-		var (
-			vars = mux.Vars(req)
-			q    = req.URL.Query()
-		)
-
-		q.Add("account_id", vars["account_id"])
-		req.URL.RawQuery = q.Encode()
-
-		act.Execute(res, req)
-	}
-
-	return negroni.New(
-		negroni.HandlerFunc(middleware.NewLogger(g.log).Execute),
-		negroni.NewRecovery(),
-		negroni.Wrap(handler),
-	)
 }
 
 func (g gorillaMux) buildCreateTaskAction() *negroni.Negroni {
