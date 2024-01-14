@@ -28,7 +28,6 @@ func NewCreateTaskAction(uc usecase.CreateTaskUseCase, log logger.Logger, v vali
 func (t CreateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 	const logKey = "create_task"
 
-	// jsonをstructに展開する
 	var input usecase.CreateTaskInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		logging.NewError(
@@ -43,7 +42,6 @@ func (t CreateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	// バリデーションを行う
 	if errs := t.validateInput(input); len(errs) > 0 {
 		logging.NewError(
 			t.log,
@@ -56,7 +54,6 @@ func (t CreateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// タスク作成を行う
 	output, err := t.uc.Execute(r.Context(), input)
 	if err != nil {
 		logging.NewError(
@@ -70,20 +67,16 @@ func (t CreateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// ログを出力する
 	logging.NewInfo(t.log, logKey, http.StatusCreated).Log("success creating task")
 
-	// 実行内容を出力する
 	response.NewSuccess(output, http.StatusCreated).Send(w)
 }
 
 func (t CreateTaskAction) validateInput(input usecase.CreateTaskInput) []string {
 	var msgs []string
 
-	// バリデーションを行う
 	err := t.validator.Validate(input)
 	if err != nil {
-		// エラーメッセージを取得する
 		for _, msg := range t.validator.Messages() {
 			msg := msg
 			msgs = append(msgs, msg)

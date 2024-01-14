@@ -2,15 +2,10 @@ package domain
 
 import (
 	"context"
-	"strconv"
 	"time"
 )
 
 type TaskID uint64
-
-func Uint64(taskID string) (uint64, error) {
-	return strconv.ParseUint(taskID, 10, 64)
-}
 
 type (
 	TaskRepository interface {

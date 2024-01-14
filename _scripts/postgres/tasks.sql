@@ -44,3 +44,16 @@ VALUES
 
 -- completed INTEGER CHECK(id = 0 OR id = 1) NOT NULL DEFAULT 0,
 -- COMMENT ON COLUMN tasks.completed IS '完了フラグ 0:未完了 1:完了';
+
+-- CREATE TABLE IF NOT EXISTS accountstodo (
+--     id SERIAL NOT NULL,
+--     name VARCHAR(15) NOT NULL,
+--     created_at TIMESTAMP NOT NULL,
+--     updated_at TIMESTAMP NOT NULL,
+--     PRIMARY KEY (id)
+-- );
+
+-- COMMENT ON COLUMN accountstodo.id IS 'アカウントID';
+-- COMMENT ON COLUMN accountstodo.name IS '名前';
+-- COMMENT ON COLUMN accountstodo.created_at IS '作成日時';
+-- COMMENT ON COLUMN accountstodo.updated_at IS '更新日時';

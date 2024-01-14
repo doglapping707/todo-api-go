@@ -3,6 +3,7 @@ package action
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/doglapping707/todo-api-go/adapter/api/logging"
 	"github.com/doglapping707/todo-api-go/adapter/api/response"
@@ -29,7 +30,7 @@ func NewUpdateTaskAction(uc usecase.UpdateTaskUseCase, log logger.Logger, v vali
 func (t UpdateTaskAction) Execute(w http.ResponseWriter, r *http.Request) {
 	var logKey = "update_task"
 
-	var taskID, err = domain.Uint64(r.URL.Query().Get("task_id"))
+	var taskID, err = strconv.ParseUint(r.URL.Query().Get("task_id"), 10, 64)
 	if err != nil {
 		var err = response.ErrParameterInvalid
 		logging.NewError(

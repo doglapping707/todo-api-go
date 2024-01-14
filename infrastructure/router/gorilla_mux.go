@@ -93,15 +93,15 @@ func (g gorillaMux) Listen() {
 }
 
 func (g gorillaMux) setAppHandlers(router *mux.Router) {
-	// プレフィックスを設定する
+	// prefix
 	api := router.PathPrefix("/v1").Subrouter()
 
-	// タスク
+	// task
 	api.Handle("/tasks", g.buildCreateTaskAction()).Methods(http.MethodPost)
 	api.Handle("/tasks/{task_id}", g.buildUpdateTaskAction()).Methods(http.MethodPut)
 	api.Handle("/tasks", g.buildFindAllTaskAction()).Methods(http.MethodGet)
 
-	// ヘルスチェック
+	// health check
 	api.HandleFunc("/health", action.HealthCheck).Methods(http.MethodGet)
 }
 
